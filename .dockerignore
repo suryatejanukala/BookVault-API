@@ -1,0 +1,11 @@
+.git
+.gitignore
+target/*.original
+*.md
+*.html
+*.log
+*.sh
+prompts
+.kiro
+.report
+.test-plan
