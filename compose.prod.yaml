@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    image: surya18181818/book-store:books
+    ports:
+      - '8080:8080'
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://root:secret@mongodb:27017/mydatabase?authSource=admin
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: "no"
+
+  mongodb:
+    image: 'mongo:latest'
+    environment:
+      - 'MONGO_INITDB_DATABASE=mydatabase'
+      - 'MONGO_INITDB_ROOT_PASSWORD=secret'
+      - 'MONGO_INITDB_ROOT_USERNAME=root'
+    ports:
+      - '27017:27017'
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
