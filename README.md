@@ -1,11 +1,27 @@
 # BookVault-API Store — Complete Technical Analysis
 
-**1. Project Summary**
-**Purpose**: A RESTful Book Store backend application that allows users to manage a catalog of books. It provides secure CRUD operations on books and user account management with JWT-based authentication.
+## 1. Project Summary
 
-**Problem it solves**: Demonstrates a production-grade Spring Boot REST API with stateless JWT security, MongoDB persistence, role-based access control, structured exception handling, API documentation, containerization, and comprehensive test coverage — serving as a full-stack backend reference implementation.
+- **Purpose**
+  - A RESTful Book Store backend application that enables users to manage a catalog of books. It provides secure CRUD operations for books along with user registration and authentication using JWT-based security.
 
-**2.Project Structure Diagram:**
+- **Problem It Solves**
+  - Demonstrates a production-grade Spring Boot REST API featuring:
+    - Stateless JWT authentication and authorization
+    - MongoDB persistence
+    - Role-based access control (RBAC)
+    - Global exception handling with structured error responses
+    - Bean Validation for request validation
+    - Interactive API documentation using Swagger/OpenAPI
+    - Docker-based containerization
+    - Comprehensive unit testing with JaCoCo code coverage reporting
+
+  - Serves as a reference implementation for building secure, scalable, and production-ready backend applications using Spring Boot and MongoDB.
+
+
+## 2.Project Structure Diagram:
+
+```
 src/
 │   ├── main/
 │   │   ├── java/com/thinkconstructive/book_store/
@@ -65,9 +81,10 @@ src/
 │   │       ├── static/                          (empty - no frontend)
 │   │       ├── templates/                       (empty - no Thymeleaf)
 │   │       └── application.properties           (logging, actuator, external service config)
+```
 
+## 3. Technology Stack
 
-**3. Technology Stack**
 | Technology | Version / Detail | Source |
 |------------|------------------|--------|
 | Java | 17 | `pom.xml` → `<java.version>17</java.version>` |
@@ -93,52 +110,118 @@ src/
 | Amazon Corretto JDK | 17 (Base Image) | `Dockerfile` → `amazoncorretto:17` |
 | Logback | via Spring Boot (Default) | `application.properties` logging configuration |
 
-**4. Architecture**
+## 4. Architecture
+
 **Pattern:** Layered (N-Tier) Architecture with MVC
+```
 Controller Layer  →  Service Layer  →  Repository Layer  →  MongoDB
      ↕                    ↕
   DTO / Mapper       Exception Handling
      ↕
   Security (JWT Filter + SecurityConfig)
+```
   
-Controller Layer (controller/) — handles HTTP requests, delegates to services, returns ResponseEntity<ResponseStructure>
-Service Layer (service/ + service/impl/) — business logic, interface + implementation separation
-Repository Layer (repository/) — MongoDB data access via MongoRepository
-Entity Layer (entity/) — MongoDB documents (Book as Java record, UserInfo as Lombok class)
-DTO Layer (dto/) — request/response data transfer objects (Java records with Bean Validation)
-Mapper Layer (mapper/) — manual mapping between Entity ↔ DTO (no MapStruct)
-Config Layer (config/) — Spring Security, JWT filter, Swagger/OpenAPI
-Exception Layer (exception/) — custom exceptions + @RestControllerAdvice global handler
-Util Layer (util/) — ResponseStructure wrapper for all API responses
-Monitoring Layer (monitoring/) — custom Actuator HealthIndicator
+## Architecture Overview
 
-**Design Patterns used:**
-Builder pattern — ResponseStructure via Lombok @Builder
-Strategy pattern — UserDetailsService implementation
-Filter Chain pattern — JwtFilter extends OncePerRequestFilter
-DAO/Repository pattern — Spring Data MongoDB repositories
-Facade pattern — Service layer abstracts repository complexity
+- **Controller Layer (`controller/`)**
+  - Handles HTTP requests.
+  - Delegates business logic to the service layer.
+  - Returns standardized `ResponseEntity` responses.
+
+- **Service Layer (`service/` & `service/impl/`)**
+  - Contains the application's business logic.
+  - Uses interface and implementation separation for better maintainability and testability.
+
+- **Repository Layer (`repository/`)**
+  - Provides data access using Spring Data MongoDB.
+  - Extends `MongoRepository` for CRUD and custom database operations.
+
+- **Entity Layer (`entity/`)**
+  - Defines MongoDB document models.
+  - `Book` is implemented as a Java Record.
+  - `UserInfo` is implemented as a Lombok `@Data` class.
+
+- **DTO Layer (`dto/`)**
+  - Defines request and response data transfer objects.
+  - Uses Java Records with Bean Validation annotations.
+
+- **Mapper Layer (`mapper/`)**
+  - Performs manual mapping between Entities and DTOs.
+  - Does not use MapStruct.
+
+- **Configuration Layer (`config/`)**
+  - Configures Spring Security.
+  - Implements JWT authentication.
+  - Configures Swagger/OpenAPI documentation.
+
+- **Exception Layer (`exception/`)**
+  - Defines custom exception classes.
+  - Provides centralized exception handling using `@RestControllerAdvice`.
+
+- **Utility Layer (`util/`)**
+  - Contains the `ResponseStructure` class for standardized API responses.
+
+- **Monitoring Layer (`monitoring/`)**
+  - Implements custom Spring Boot Actuator `HealthIndicator`s for application monitoring.
+
+---
+
+## Design Patterns Used
+
+- **Builder Pattern**
+  - Used in `ResponseStructure` via Lombok `@Builder`.
+
+- **Strategy Pattern**
+  - Used for the `UserDetailsService` implementation in Spring Security.
+
+- **Filter Chain Pattern**
+  - Implemented using `JwtFilter` extending `OncePerRequestFilter`.
+
+- **DAO/Repository Pattern**
+  - Implemented through Spring Data MongoDB repositories.
+
+- **Facade Pattern**
+  - Service layer abstracts repository interactions and business logic.
 
 
-**5. Features Implemented**
-User registration with BCrypt password encoding
-User login with JWT token generation (30-minute expiry)
-JWT-based stateless authentication via Authorization: Bearer <token> header
-Role-based access control (ROLE_USER, ROLE_ADMIN)
-Full CRUD for books (Create, Read All, Read by ID, Update name, Delete)
-Custom MongoDB queries using @Query, @Update, @DeleteQuery annotations
-Global exception handling with structured error responses
-Bean Validation on all DTOs
-Swagger UI / OpenAPI 3 documentation
-Spring Boot Actuator with health, info, metrics, env, beans endpoints
-Custom HealthIndicator for an external Employee Service
-Structured JSON API responses via ResponseStructure wrapper
-File-based logging (logs/application.log) + console logging
-Docker multi-stage build
-Docker Compose for local dev (MongoDB only) and production (app + MongoDB)
-Comprehensive unit test suite with JaCoCo coverage reporting
+## 5. Features Implemented
 
-**6. REST APIs**
+- User registration with **BCrypt** password encoding.
+- User authentication with **JWT token generation** (30-minute expiration).
+- Stateless authentication using the **`Authorization: Bearer <token>`** header.
+- Role-based access control (**`ROLE_USER`** and **`ROLE_ADMIN`**).
+- Complete CRUD operations for books:
+  - Create a book
+  - Retrieve all books
+  - Retrieve a book by ID
+  - Update a book's name
+  - Delete a book
+- Custom MongoDB queries using:
+  - `@Query`
+  - `@Update`
+  - `@DeleteQuery`
+- Global exception handling with standardized error responses.
+- Bean Validation for all request DTOs.
+- Interactive API documentation using **Swagger UI / OpenAPI 3**.
+- Spring Boot Actuator endpoints for:
+  - Health
+  - Info
+  - Metrics
+  - Environment
+  - Beans
+- Custom `HealthIndicator` for monitoring an external Employee Service.
+- Standardized JSON API responses using the `ResponseStructure` wrapper.
+- File-based logging (`logs/application.log`) along with console logging.
+- Docker multi-stage build for optimized container images.
+- Docker Compose support for:
+  - Local development (MongoDB)
+  - Production (Application + MongoDB)
+- Comprehensive unit testing with **JUnit 5**, **Mockito**, and **JaCoCo** code coverage reporting.
+
+
+
+## 6. REST APIs
+
 ### Book Management APIs
 > **Base Path:** `/book-store` — BookController.java
 
@@ -159,29 +242,43 @@ Comprehensive unit test suite with JaCoCo coverage reporting
 | POST | `/user-info/register` | No | Register a new user. |
 | POST | `/user-info/login` | No | Authenticate the user and receive a JWT access token. |
 
-**7. Security**
-**Mechanism:** JWT (JSON Web Token) + Spring Security
 
-**SecurityConfig.java** — defines the security filter chain:
-CSRF disabled (stateless REST API)
-Session management: STATELESS
-DaoAuthenticationProvider with BCryptPasswordEncoder
-Role-based URL authorization (see REST APIs table above)
-HTTP Basic also enabled alongside JWT
+## 7. Security
 
-**JwtFilter.java** — OncePerRequestFilter:
-Extracts Authorization: Bearer <token> header
-Validates token via JWTService
-Handles ExpiredJwtException → 401 with "JWT token has expired"
-Handles SignatureException → 401 with "Invalid JWT signature"
-Sets SecurityContextHolder authentication on success
+- **Authentication Mechanism**
+  - JWT (JSON Web Token) with Spring Security.
 
-**JWTServiceImpl.java:**
-Generates a random HmacSHA256 secret key at startup (in-memory, not persisted)
-Token expiry: 30 minutes (1000 * 60 * 30 ms)
-Uses JJWT 0.12.6 API
-UserInfoUserDetailsServiceImpl.java — implements UserDetailsService, loads user from MongoDB by username
-UserInfoUserDetailsMapper.java — implements UserDetails, maps comma-separated roles string to GrantedAuthority list (e.g., "ROLE_ADMIN,ROLE_USER")
-Password storage: BCrypt via BCryptPasswordEncoder
+- **`SecurityConfig.java`**
+  - Configures the Spring Security filter chain.
+  - Disables CSRF for stateless REST APIs.
+  - Uses **`SessionCreationPolicy.STATELESS`**.
+  - Configures `DaoAuthenticationProvider` with `BCryptPasswordEncoder`.
+  - Implements role-based URL authorization.
+  - Supports both JWT authentication and HTTP Basic authentication.
+
+- **`JwtFilter.java`**
+  - Extends `OncePerRequestFilter`.
+  - Extracts the JWT from the `Authorization: Bearer <token>` header.
+  - Validates the token using `JWTService`.
+  - Handles `ExpiredJwtException` by returning **HTTP 401 Unauthorized** with the message **"JWT token has expired"**.
+  - Handles `SignatureException` by returning **HTTP 401 Unauthorized** with the message **"Invalid JWT signature"**.
+  - Sets the authenticated user in the `SecurityContextHolder` after successful validation.
+
+- **`JWTServiceImpl.java`**
+  - Generates a random **HMAC-SHA256** secret key at application startup.
+  - Stores the secret key in memory (not persisted).
+  - Generates JWT tokens with a **30-minute expiration**.
+  - Uses the **JJWT 0.12.6** library for token creation and validation.
+
+- **`UserInfoUserDetailsServiceImpl.java`**
+  - Implements `UserDetailsService`.
+  - Loads user details from MongoDB based on the username.
+
+- **`UserInfoUserDetailsMapper.java`**
+  - Implements `UserDetails`.
+  - Converts comma-separated roles (e.g., `ROLE_ADMIN,ROLE_USER`) into a list of `GrantedAuthority` objects.
+
+- **Password Security**
+  - Passwords are securely hashed using `BCryptPasswordEncoder` before being stored in MongoDB.
 
 
